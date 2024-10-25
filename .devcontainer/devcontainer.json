@@ -1,0 +1,23 @@
+{
+	"name": "Existing Docker Compose (Extend)",
+	"dockerComposeFile": [
+		"../docker-compose.yaml",
+		"docker-compose.yml"
+	],
+	"service": "my-service",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"features": {
+		"ghcr.io/duduribeiro/devcontainer-features/neovim:1": {
+			"version": "stable"
+		}
+	  },
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-playwright.playwright",
+				"asvetliakov.vscode-neovim",
+				"rioj7.command-variable"
+			]
+		}
+	}
+}

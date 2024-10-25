@@ -1,0 +1,11 @@
+version: "3"
+services:
+  my-service:
+   build:
+    context: . 
+    dockerfile: Dockerfile 
+   image: playwright:latest 
+   volumes:
+    - .:/app
+    - /app/node_modules
+    - /app/test-results
