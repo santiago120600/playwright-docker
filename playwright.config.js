@@ -10,7 +10,8 @@ module.exports = defineConfig({
   reporter: 'html',
   use: {
     trace: 'retain-on-failure',
-    screenshot: 'on'
+    screenshot: 'on',
+    baseURL: 'https://rahulshettyacademy.com' 
   },
 
   projects: [

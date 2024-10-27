@@ -3,21 +3,46 @@ const { test, expect } = require('@playwright/test');
 
 let usernameGlobal = "santiago@gmail.com";
 let passwordGlobal = "aB#45678";
+let productNameGlobal = 'IPHONE 13 PRO';
+let creditCardNumberGlobal = '4543993192922294';
 
-test('Ecommerce login test', async ({page})=>{
-    await page.goto("https://rahulshettyacademy.com/client/");
+test.only('Ecommerce login test', async ({page})=>{
+    await page.goto("/client");
     const username = page.locator("#userEmail");
     await username.fill(usernameGlobal);
     const password = page.locator("#userPassword");
     await password.fill(passwordGlobal);
     const loginBtn = page.locator("#login");
     await loginBtn.click();
-    // await page.waitForLoadState('networkidle');
     await page.locator(".card-body b").first().waitFor();
-    const productNames = await page.locator(".card-body b").allTextContents();
-    console.log(productNames);
-    //await page.pause();
+    await addProductToCart(productNameGlobal, page);
+    const cartBtn = page.getByRole('button').getByText('Cart', {exact:true});
+    await cartBtn.click();
+    const productName = page.locator(".cartSection");
+    await expect(productName.getByText(productNameGlobal)).toBeVisible();
+    const checkoutBtn = page.getByText('Checkout');
+    await checkoutBtn.click();
+    await expect(page.locator(".item__title")).toHaveText(productNameGlobal);
+    await expect(page.locator(".item__quantity")).toHaveText("Quantity: 1");
+    const creditCardNumber = await selectByLabel('Credit Card Number', page);
+    await creditCardNumber.clear();
+    await creditCardNumber.fill(creditCardNumberGlobal);
 });
+
+function selectByLabel(label, page){
+    return page.locator(`//div[contains(text(),'${label}')]/following-sibling::input`);    
+}
+
+async function addProductToCart(productName, page){
+    const products =  await page.locator(".card-body").all();
+    for(let i = 0; i < await products.length;i++)
+    {
+        if(await products[i].locator("b").textContent()==productName){
+            await products[i].getByText('Add To Cart').click();
+            break;
+        }     
+    }
+}
 
 test('Create account', async ({page})=>{
     await page.goto("https://rahulshettyacademy.com/client/");
