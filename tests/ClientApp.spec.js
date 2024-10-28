@@ -15,7 +15,7 @@ test.only('Ecommerce login test', async ({page})=>{
     const loginBtn = page.locator("#login");
     await loginBtn.click();
     await page.locator(".card-body b").first().waitFor();
-    await addProductToCart(productNameGlobal, page);
+    await addProductToCart(page, productNameGlobal);
     const cartBtn = page.getByRole('button').getByText('Cart', {exact:true});
     await cartBtn.click();
     const productName = page.locator(".cartSection");
@@ -24,16 +24,64 @@ test.only('Ecommerce login test', async ({page})=>{
     await checkoutBtn.click();
     await expect(page.locator(".item__title")).toHaveText(productNameGlobal);
     await expect(page.locator(".item__quantity")).toHaveText("Quantity: 1");
-    const creditCardNumber = await selectByLabel('Credit Card Number', page);
+    const creditCardNumber = await selectByLabel(page, 'Credit Card Number');
     await creditCardNumber.clear();
     await creditCardNumber.fill(creditCardNumberGlobal);
+    await selectDate(page, '09','28');
+    const cvvBox = selectByLabel(page, "CVV Code");
+    await cvvBox.fill("123");
+    const nameOnCardBox = selectByLabel(page, "Name on Card");
+    await nameOnCardBox.fill("Santiago castanon");
+    const applyCouponBox = selectByLabel(page, "Apply Coupon");
+    await applyCouponBox.fill("rahulshettyacademy");
+    await selectCountry(page, "Mexico");
+    await expect(page.locator('input[type="text"]').nth(4)).toHaveValue(usernameGlobal);
+    const applyCouponBtn = page.locator("button:has-text('Apply Coupon')");
+    await applyCouponBtn.click();
+    await expect(page.locator("p:has-text('* Coupon Applied')")).toBeVisible();
+    const placeOrderBtn = page.locator("a:has-text('Place Order')");
+    await placeOrderBtn.click();
+    await expect(page.locator(".hero-primary")).toHaveText("Thankyou for the order.");
+    const ordersID = await getOrdersId(page);
+    const orderHistoryLink = page.getByText("Orders History Page");
+    await orderHistoryLink.click();
+    await expect(isOrderIDDisplayed(page, ordersID[0])).toBeTruthy();
 });
 
-function selectByLabel(label, page){
+async function isOrderIDDisplayed(page, orderID) {
+    const orderIds = await page.locator("tbody th").allTextContents();
+    for (let index = 0; index < orderIds.length; index++) {
+        if (orderIds[index]===orderID) {
+            return true;
+        }
+    }
+    return false;
+}
+
+async function getOrdersId(page) {
+    const orderIDs =  await page.locator("label.ng-star-inserted").allTextContents();
+    orderIDs.forEach((element, index) => {
+        orderIDs[index] = element.substring(3, element.length-3);
+    });
+    return orderIDs;
+}
+
+async function selectCountry(page, country) {
+    await page.getByPlaceholder("Select Country").pressSequentially(country);
+    await page.locator("section.ta-results").getByText(country,{exact:true}).click();
+}
+
+async function selectDate(page, month, year){
+    const [monthBox, yearBox] = await page.locator("//div[contains(text(),'Expiry Date')]/following-sibling::select").all();    
+    await monthBox.selectOption(month);
+    await yearBox.selectOption(year);
+}
+
+function selectByLabel(page, label){
     return page.locator(`//div[contains(text(),'${label}')]/following-sibling::input`);    
 }
 
-async function addProductToCart(productName, page){
+async function addProductToCart(page, productName){
     const products =  await page.locator(".card-body").all();
     for(let i = 0; i < await products.length;i++)
     {
