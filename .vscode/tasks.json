@@ -5,6 +5,25 @@
             "label": "playwright Code Generator",
             "type": "shell",
             "command": "npx playwright codegen ${input:url}"
+        },
+        {
+            "label": "Run in terminal",
+            "type": "shell",
+            "command": "npx playwright test ${input:selectFile} --project=${input:browser} --headed",
+            "problemMatcher": []
+        },
+        {
+            "label": "Show report",
+            "type": "shell",
+            "command": "npx playwright show-report",
+            "problemMatcher": [],
+            "isBackground": false,
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            }
         }
     ],
     "inputs": [
@@ -13,6 +32,29 @@
             "description": "URL for code generation",
             "default": "Please enter the URL",
             "type": "promptString"
+        },
+        {
+            "id": "browser",
+            "type": "pickString",
+            "description": "Select the browser",
+            "options": [
+                "chromium",
+                "firefox",
+                "webkit"
+            ],
+            "default": "chromium"
+        },
+        {
+            "id": "selectFile",
+            "type": "command",
+            "command": "extension.commandvariable.file.openDialog",
+            "args": {
+                "canSelect": "files",
+                "defaultUri": "${workspaceFolder}/tests",
+                "transform": {
+                    "text": "${fileBasename}",
+                }
+            }
         }
     ]
 }
