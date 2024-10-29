@@ -5,3 +5,5 @@ node_modules/
 /playwright/.cache/
 package-lock.json
 requirements.txt
+/allure-report
+/allure-results

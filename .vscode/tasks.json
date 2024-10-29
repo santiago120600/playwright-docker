@@ -24,7 +24,33 @@
                 "showReuseMessage": false,
                 "clear": true
             }
-        }
+        },
+        {
+            "label": "Genrate allure report",
+            "type": "shell",
+            "command": "allure generate ./allure-results --clean",
+            "problemMatcher": [],
+            "isBackground": false,
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Open allure report",
+            "type": "shell",
+            "command": "allure open",
+            "problemMatcher": [],
+            "isBackground": false,
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
     ],
     "inputs": [
         {

@@ -6,6 +6,7 @@
             "request": "launch",
             "name": "Playwright Test",
             "console": "internalConsole",
+            "internalConsoleOptions": "neverOpen",
             "skipFiles": [
                 "<node_internals>/**"
             ],
@@ -17,8 +18,12 @@
                 "--project=${input:browser}",
                 "${input:headed}",
                 "${input:debug}",
-                "${input:ui}"
-            ]
+                "${input:ui}",
+                "${input:report}"
+            ],
+            // "env": {
+            //     "PWDEBUG": "1",
+            // }
         }
     ],
     "inputs": [
@@ -92,6 +97,22 @@
                 }
             ],
             "default": ""
-        }
+        },
+        {
+            "id": "report",
+            "type": "pickString",
+            "description": "Select report type",
+            "options": [
+                {
+                    "label": "Html",
+                    "value": ""
+                },
+                {
+                    "label": "Allure",
+                    "value": "--reporter=line,allure-playwright"
+                }
+            ],
+            "default": ""
+        },
     ]
 }
