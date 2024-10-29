@@ -1,5 +1,5 @@
-
 const { test, expect } = require('@playwright/test');
+const LoginPage = require('../pageobjects/LoginPage');
 
 let usernameGlobal = "santiago@gmail.com";
 let passwordGlobal = "aB#45678";
@@ -7,13 +7,9 @@ let productNameGlobal = 'IPHONE 13 PRO';
 let creditCardNumberGlobal = '4543993192922294';
 
 test.only('Ecommerce login test', async ({page})=>{
-    await page.goto("/client");
-    const username = page.locator("#userEmail");
-    await username.fill(usernameGlobal);
-    const password = page.locator("#userPassword");
-    await password.fill(passwordGlobal);
-    const loginBtn = page.locator("#login");
-    await loginBtn.click();
+    const loginPage = new LoginPage(page);
+    loginPage.goTo();
+    loginPage.login(usernameGlobal, passwordGlobal);
     await page.locator(".card-body b").first().waitFor();
     await addProductToCart(page, productNameGlobal);
     const cartBtn = page.getByRole('button').getByText('Cart', {exact:true});
@@ -41,11 +37,12 @@ test.only('Ecommerce login test', async ({page})=>{
     await expect(page.locator("p:has-text('* Coupon Applied')")).toBeVisible();
     const placeOrderBtn = page.locator("a:has-text('Place Order')");
     await placeOrderBtn.click();
-    await expect(page.locator(".hero-primary")).toHaveText("Thankyou for the order.");
+    await expect(page.locator(".hero-primary")).toHaveText("Thankyou for the order.").screenshot();
     const ordersID = await getOrdersId(page);
     const orderHistoryLink = page.getByText("Orders History Page");
     await orderHistoryLink.click();
     await expect(isOrderIDDisplayed(page, ordersID[0])).toBeTruthy();
+    await page.screenshot({path:'test-results/screenshot.png'})
 });
 
 async function isOrderIDDisplayed(page, orderID) {
