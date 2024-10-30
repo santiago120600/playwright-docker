@@ -1,7 +1,13 @@
 class HomePage {
+
     constructor(page) {
         this.page = page;
         this.cartBtn = page.getByRole('button').getByText('Cart', {exact:true});
+    }
+    
+    async navigateToCart(){
+        await this.cartBtn.click();
+        await this.page.waitForLoadState('networkidle');
     }
 
     async addProductToCart(productName){
