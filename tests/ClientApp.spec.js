@@ -29,11 +29,9 @@ test.only('Ecommerce login test', async ({page})=>{
     const homePage = new HomePage(page);
     await homePage.addProductToCart(productNameGlobal);
     await homePage.navigateToCart();
-    // const cartPage = new CartPage(page);
-    await page.screenshot({path:'screenshotbefore.png'});
+    const cartPage = new CartPage(page);
     const isProductNameVisible = await cartPage.isTextVisibleCart(productNameGlobal);
     await expect(isProductNameVisible).toBeTruthy();
-    // await page.screenshot({path:'screenshotafter.png'});
     await cartPage.navigateToCheckout();
     const checkoutPage = new CheckoutPage(page);
     const productInfo = await checkoutPage.isProductInfoMatching();
@@ -41,9 +39,11 @@ test.only('Ecommerce login test', async ({page})=>{
     await expect(productInfo[1].trim()).toBe("Quantity: 1".trim());
     await checkoutPage.fillCreditCardInfo(creditCardNumberGlobal, monthExpiry, yearExpiry,cvv,nameOnCardGlobal);
     await checkoutPage.addCoupon("rahulshettyacademy");
-    expected(await checkoutPage.isCouponVisible()).toBeTruthy();
+    await expect(checkoutPage.loadSpinner).not.toBeAttached();
+    const isCouponVisible = await checkoutPage.isCouponVisible();
+    await expect(isCouponVisible).toBeTruthy();
     await checkoutPage.fillShippingInfo("Mexico");
-    await expect(checkoutPage.getEmailTxt()).toBe(usernameGlobal);
+    await expect(checkoutPage.emailBox).toHaveValue(usernameGlobal);
     await checkoutPage.navigateToConfirmation();
 });
 
