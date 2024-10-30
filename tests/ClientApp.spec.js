@@ -39,10 +39,18 @@ test.only('Ecommerce login test', async ({page})=>{
     await checkoutPage.fillShippingInfo("Mexico");
     await expect(checkoutPage.emailBox).toHaveValue(usernameGlobal);
     await checkoutPage.navigateToConfirmation();
+    const orderConfirmationPage = poManager.getOrderConfirmationPage();
+    await expect(orderConfirmationPage.thankyoumsg).toBeVisible();
+    const orderId = await orderConfirmationPage.getOrdersId();
+    await orderConfirmationPage.navigateToOrderHistory();
+    const orderhistoryPage = poManager.getOrderHistoryPage();
+    expect(await orderhistoryPage.isOrderIDDisplayed(orderId)).toBeTruthy();
+    expect(await orderhistoryPage.isOrderIDDisplayed("123456")).toBeFalsy();
 });
 
 test('Create account', async ({page})=>{
-    const loginPage = new LoginPage(page);
+    const poManager = new POManager(page);
+    const loginPage = poManager.getRegisterPage();
     await loginPage.goTo();
     await loginPage.registerLink.click();
     const registerPage = new RegisterPage(page);

@@ -1,3 +1,22 @@
 {
     "editor.minimap.enabled": false
+    // "vscode-neovim.compositeKeys": {
+    //     "jk": {
+    //         "command": "vscode-neovim.lua",
+    //         "args": [
+    //             // "local code = require('vscode')",
+    //             // "code.action('vscode-neovim.escape')"
+    //             // 
+    //             // "vscode.action('editor.action.escape')"
+    //             "require('vscode').call('editor.action.escape')"
+    //             // "require('vscode').action('editor.action.escape')"
+    //             // 
+    //             // "vim.api.nvim_input('<ESC>')"
+    //         ]
+    //     },
+    // //    "jj": {
+    // //         "command": "vscode-neovim.escape",
+    // //     }, 
+    // },
+    // "debug.javascript.autoAttachFilter": "smart"
 }

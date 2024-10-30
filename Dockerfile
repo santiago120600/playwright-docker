@@ -27,4 +27,4 @@ RUN npm install -g allure-commandline@2.32.0 --save-dev
 
 COPY . .
 
-CMD ["npx", "playwright", "test"]
+CMD ["npx", "run", "test"]

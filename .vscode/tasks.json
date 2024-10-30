@@ -26,7 +26,7 @@
             }
         },
         {
-            "label": "Genrate allure report",
+            "label": "Generate allure report",
             "type": "shell",
             "command": "allure generate ./allure-results --clean",
             "problemMatcher": [],
