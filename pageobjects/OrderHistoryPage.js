@@ -2,6 +2,20 @@ class OrderHistoryPage {
 
     constructor(page) {
         this.page = page;
+        this.tableRows = page.locator("tbody tr");
+    }
+
+    async navigateToOrderSummaryPage(orderId){
+        const rows = await this.tableRows.all();
+        const rowsTxt = await this.tableRows.locator("th").allTextContents();
+        for (let i = 0; i < rowsTxt.length; i++) {
+            if(rowsTxt[i]==orderId)
+            {
+                await rows[i].getByRole("button", {name:"View"}).click();
+                break;
+            }
+        }
+        await this.page.waitForLoadState('networkidle');
     }
 
     async isOrderIDDisplayed(orderID) {

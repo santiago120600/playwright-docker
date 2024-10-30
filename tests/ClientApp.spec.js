@@ -14,8 +14,9 @@ let nameOnCardGlobal = "santiago castanon";
 let cvv = "333";
 let monthExpiry = "11";
 let yearExpiry = "28";
+const country = "Mexico";
 
-test.only('Ecommerce login test', async ({page})=>{
+test.only('Create order', async ({page})=>{
     const poManager = new POManager(page);
     const loginPage = poManager.getLoginPage();
     await loginPage.goTo();
@@ -36,7 +37,7 @@ test.only('Ecommerce login test', async ({page})=>{
     await expect(checkoutPage.loadSpinner).not.toBeAttached();
     const isCouponVisible = await checkoutPage.isCouponVisible();
     await expect(isCouponVisible).toBeTruthy();
-    await checkoutPage.fillShippingInfo("Mexico");
+    await checkoutPage.fillShippingInfo(country);
     await expect(checkoutPage.emailBox).toHaveValue(usernameGlobal);
     await checkoutPage.navigateToConfirmation();
     const orderConfirmationPage = poManager.getOrderConfirmationPage();
@@ -45,7 +46,15 @@ test.only('Ecommerce login test', async ({page})=>{
     await orderConfirmationPage.navigateToOrderHistory();
     const orderhistoryPage = poManager.getOrderHistoryPage();
     expect(await orderhistoryPage.isOrderIDDisplayed(orderId)).toBeTruthy();
-    expect(await orderhistoryPage.isOrderIDDisplayed("123456")).toBeFalsy();
+    orderhistoryPage.navigateToOrderSummaryPage(orderId);
+    const orderSummaryPage = poManager.getOrderSummaryPage();
+    await expect(orderSummaryPage.orderSummayTxt).toHaveText("order summary");
+    await expect(orderSummaryPage.orderId).toHaveText(orderId);
+    await expect(orderSummaryPage.billingCountry).toContainText(country);
+    await expect(orderSummaryPage.deliveryCountry).toContainText(country);
+    await expect(orderSummaryPage.deliveryEmail).toHaveText(usernameGlobal);
+    await expect(orderSummaryPage.billingEmail).toHaveText(usernameGlobal);
+    await expect(orderSummaryPage.productName).toHaveText(productNameGlobal);
 });
 
 test('Create account', async ({page})=>{
