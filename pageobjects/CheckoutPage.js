@@ -47,11 +47,8 @@ class CheckoutPage {
     }
 
     async selectCountry(country) {
-        // await this.selectCountryBox.screenshot({ path: 'screenshotCountry.png' });
         await this.selectCountryBox.pressSequentially(country);
-        await this.page.screenshot({path:'screenshotafterpressing.png'});
         const searchResults = this.page.locator("section.ta-results").getByText(country, { exact: true });
-        // searchResults.screenshot({ path: 'screenshot.png' });
         await searchResults.click();
     }
 

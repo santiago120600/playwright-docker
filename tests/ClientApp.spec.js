@@ -1,12 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const LoginPage = require('../pageobjects/LoginPage');
-const HomePage = require('../pageobjects/HomePage');
-const CartPage = require('../pageobjects/CartPage');
-const RegisterPage = require('../pageobjects/RegisterPage');
-const CheckoutPage = require('../pageobjects/CheckoutPage');
-const OrderSummaryPage = require('../pageobjects/OrderSummaryPage');
-const OrderHistoryPage = require('../pageobjects/OrderHistoryPage');
-const OrderConfirmationPage = require('../pageobjects/OrderConfirmationPage');
+const POManager = require('../pageobjects/POManager');
 
 let usernameGlobal = "santiago@gmail.com";
 let passwordGlobal = "aB#45678";
@@ -23,17 +16,18 @@ let monthExpiry = "11";
 let yearExpiry = "28";
 
 test.only('Ecommerce login test', async ({page})=>{
-    const loginPage = new LoginPage(page);
+    const poManager = new POManager(page);
+    const loginPage = poManager.getLoginPage();
     await loginPage.goTo();
     await loginPage.login(usernameGlobal, passwordGlobal);
-    const homePage = new HomePage(page);
+    const homePage = poManager.getHomePage();
     await homePage.addProductToCart(productNameGlobal);
     await homePage.navigateToCart();
-    const cartPage = new CartPage(page);
+    const cartPage = poManager.getCartPage();
     const isProductNameVisible = await cartPage.isTextVisibleCart(productNameGlobal);
     await expect(isProductNameVisible).toBeTruthy();
     await cartPage.navigateToCheckout();
-    const checkoutPage = new CheckoutPage(page);
+    const checkoutPage = poManager.getCheckoutPage();
     const productInfo = await checkoutPage.isProductInfoMatching();
     await expect(productInfo[0].trim()).toBe(productNameGlobal.trim());
     await expect(productInfo[1].trim()).toBe("Quantity: 1".trim());
