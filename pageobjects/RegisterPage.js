@@ -12,6 +12,7 @@ class RegisterPage {
         this.radioBtn = page.locator("input[type='radio']");
         this.checkbox = page.locator("input[type='checkbox']");
         this.registerBtn = page.locator("#login");
+        this.successMsg = page.locator(".headcolor");
     }
 
     async register(firstName, lastName, email, phone, password, occupation, gender){
