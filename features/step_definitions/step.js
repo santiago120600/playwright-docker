@@ -1,26 +1,5 @@
-const { Given, Then, Before, After, setDefaultTimeout, AfterStep, Status } = require('@cucumber/cucumber');
-const { expect, chromium } = require('@playwright/test');
-const POManager = require('../../pageobjects/POManager');
-
-setDefaultTimeout(60 * 1000);
-let page, browser;
-
-Before(async function () {
-    browser = await chromium.launch({ headless: false });
-    const context = await browser.newContext();
-    page = await context.newPage();
-    this.poManager = new POManager(page);
-});
-
-After(async function () {
-    await browser.close();
-});
-
-AfterStep(async function ({ result }) {
-    if (result.status === Status.FAILED) {
-        await page.screenshot({ path: 'screenshot.png' });
-    }
-});
+const { Given, Then } = require('@cucumber/cucumber');
+const { expect } = require('@playwright/test');
 
 Given('user navigates to register screen', async function () {
     const loginPage = this.poManager.getLoginPage();
