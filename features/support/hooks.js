@@ -24,17 +24,21 @@ After(async function () {
     await this.browser.close();
 });
 
-AfterStep(async function ({ result, pickleStep }) {
+AfterStep(async function ({ result }) {
     if (result.status === Status.FAILED) {
-        const screenshotPath = path.resolve("test-results/screenshots");
-        if (!fs.existsSync(screenshotPath)) {
-            fs.mkdirSync(screenshotPath);
-        }
-        const screenshotName = pickleStep.text.replace(/[^a-z0-9]/gi, '_').toLowerCase() + new Date().toISOString().replace(/[-:T.Z]/g, '');
-        const screenshotFilePath = path.join(screenshotPath, `${screenshotName}.png`);
-        await this.page.screenshot({ path: screenshotFilePath });
+        await captureScreenshot(this.page);
         const videoPath = path.resolve("test-results/videos");
-        const videoFilePath = path.join(videoPath, `${scenarioName}.zip`);
+        const videoFilePath = path.join(videoPath, scenarioName.replace(/\s+/g, '_')+new Date().toISOString().replace(/[-:T.Z]/g, '')+".zip");
         await this.context.tracing.stop({ path: videoFilePath });
     }
 });
+
+async function captureScreenshot(page) {
+    const screenshotPath = path.resolve("test-results/screenshots");
+    if (!fs.existsSync(screenshotPath)) {
+      fs.mkdirSync(screenshotPath);
+    }
+    const screenshotName = stepName.replace(/[^a-z0-9]/gi, '_').toLowerCase() + new Date().toISOString().replace(/[-:T.Z]/g, '');
+    const screenshotFilePath = path.join(screenshotPath, `${screenshotName}.png`);
+    await page.screenshot({ path: screenshotFilePath });
+  }
