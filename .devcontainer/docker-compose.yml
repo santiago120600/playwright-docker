@@ -2,6 +2,6 @@ version: '3'
 services:
   my-service:
     volumes:
-      - ..:/workspaces:cached
+      - .:/app:cached
     command: sleep infinity
  

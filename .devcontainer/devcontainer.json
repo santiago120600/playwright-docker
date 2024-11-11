@@ -5,7 +5,7 @@
 		"docker-compose.yml"
 	],
 	"service": "my-service",
-	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"workspaceFolder": "/app",
 	"features": {
 		"ghcr.io/duduribeiro/devcontainer-features/neovim:1": {
 			"version": "stable"
