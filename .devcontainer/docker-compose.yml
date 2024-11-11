@@ -3,5 +3,9 @@ services:
   my-service:
     volumes:
       - .:/app:cached
+      - node_modules:/app/node_modules
     command: sleep infinity
+
+volumes:
+  node_modules:
  
