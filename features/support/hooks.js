@@ -33,9 +33,18 @@ AfterStep(async function ({ result }) {
         const tracePath = path.resolve("allure-results/traces");
         const traceFilePath = path.join(tracePath, scenarioName.replace(/\s+/g, '_') + new Date().toISOString().replace(/[-:T.Z]/g, '') + ".zip");
         await this.context.tracing.stop({ path: traceFilePath });
+        const videoPath = await this.page.video().path();
         const screenshotPath = await captureScreenshot(this.page);
-        const screenshotData = fs.readFileSync(screenshotPath);
-        this.attach(screenshotData, 'image/png');
+        if(fs.existsSync(screenshotPath)) {
+            this.attach(fs.readFileSync(screenshotPath), 'image/png');
+        }
+        await this.context.close();
+        if (fs.existsSync(traceFilePath)) {
+            this.attach(fs.readFileSync(traceFilePath), 'application/zip');
+        }
+        if (fs.existsSync(videoPath)) {
+            this.attach(fs.readFileSync(videoPath), 'video/webm');
+        }
     }
 });
 
