@@ -11,7 +11,7 @@ Before(async function (scenario) {
     this.browser = await chromium.launch({ headless: true });
     this.context = await this.browser.newContext({ 
         recordVideo: { 
-            dir: path.resolve("test-results/videos")
+            dir: path.resolve("allure-results/videos")
         } 
     });
     await this.context.tracing.start({ screenshots: true, snapshots: true });
@@ -30,19 +30,22 @@ After(async function () {
 
 AfterStep(async function ({ result }) {
     if (result.status === Status.FAILED) {
-        const tracePath = path.resolve("test-results/traces");
+        const tracePath = path.resolve("allure-results/traces");
         const traceFilePath = path.join(tracePath, scenarioName.replace(/\s+/g, '_') + new Date().toISOString().replace(/[-:T.Z]/g, '') + ".zip");
         await this.context.tracing.stop({ path: traceFilePath });
-        await captureScreenshot(this.page);
+        const screenshotPath = await captureScreenshot(this.page);
+        const screenshotData = fs.readFileSync(screenshotPath);
+        this.attach(screenshotData, 'image/png');
     }
 });
 
 async function captureScreenshot(page) {
-    const screenshotPath = path.resolve("test-results/screenshots");
+    const screenshotPath = path.resolve("allure-results/screenshots");
     if (!fs.existsSync(screenshotPath)) {
       fs.mkdirSync(screenshotPath);
     }
     const screenshotName = stepName.replace(/[^a-z0-9]/gi, '_').toLowerCase() + new Date().toISOString().replace(/[-:T.Z]/g, '');
     const screenshotFilePath = path.join(screenshotPath, `${screenshotName}.png`);
     await page.screenshot({ path: screenshotFilePath });
+    return screenshotFilePath;
   }
