@@ -4,115 +4,17 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Playwright Test",
-            "console": "internalConsole",
+            "name": "Run Test",
+            "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "runtimeExecutable": "npx",
+            "runtimeExecutable": "npm",
             "runtimeArgs": [
-                "playwright",
-                "test",
-                "${input:selectFile}",
-                "--project=${input:browser}",
-                "${input:headed}",
-                "${input:debug}",
-                "${input:ui}",
-                "${input:report}"
+                "run",
+                "test"
             ],
-            // "env": {
-            //     "PWDEBUG": "1",
-            // }
         }
     ],
-    "inputs": [
-        {
-            "id": "browser",
-            "type": "pickString",
-            "description": "Select the browser",
-            "options": [
-                "chromium",
-                "firefox",
-                "webkit"
-            ],
-            "default": "chromium"
-        },
-        {
-            "id": "selectFile",
-            "type": "command",
-            "command": "extension.commandvariable.file.openDialog",
-            "args": {
-                "canSelect": "files",
-                "defaultUri": "${workspaceFolder}/tests",
-                "transform": {
-                    "text": "${fileBasename}",
-                }
-            }
-        },
-        {
-            "id": "headed",
-            "type": "pickString",
-            "description": "Run in headed mode?",
-            "options": [
-                {
-                    "label": "Yes",
-                    "value": "--headed"
-                },
-                {
-                    "label": "No",
-                    "value": ""
-                }
-            ],
-            "default": ""
-        },
-        {
-            "id": "debug",
-            "type": "pickString",
-            "description": "Run in debug mode?",
-            "options": [
-                {
-                    "label": "Yes",
-                    "value": "--debug"
-                },
-                {
-                    "label": "No",
-                    "value": ""
-                }
-            ],
-            "default": ""
-        },
-        {
-            "id": "ui",
-            "type": "pickString",
-            "description": "Use the Playwright UI?",
-            "options": [
-                {
-                    "label": "Yes",
-                    "value": "--ui"
-                },
-                {
-                    "label": "No",
-                    "value": ""
-                }
-            ],
-            "default": ""
-        },
-        {
-            "id": "report",
-            "type": "pickString",
-            "description": "Select report type",
-            "options": [
-                {
-                    "label": "Html",
-                    "value": ""
-                },
-                {
-                    "label": "Allure",
-                    "value": "--reporter=line,allure-playwright"
-                }
-            ],
-            "default": ""
-        },
-    ]
 }
