@@ -8,8 +8,12 @@ let stepName;
 let scenarioName;
 
 Before(async function (scenario) {
-    this.browser = await chromium.launch({ headless: false });
-    this.context = await this.browser.newContext();
+    this.browser = await chromium.launch({ headless: true });
+    this.context = await this.browser.newContext({ 
+        recordVideo: { 
+            dir: path.resolve("test-results/videos")
+        } 
+    });
     await this.context.tracing.start({ screenshots: true, snapshots: true });
     this.page = await this.context.newPage();
     this.poManager = new POManager(this.page);
@@ -26,10 +30,10 @@ After(async function () {
 
 AfterStep(async function ({ result }) {
     if (result.status === Status.FAILED) {
+        const tracePath = path.resolve("test-results/traces");
+        const traceFilePath = path.join(tracePath, scenarioName.replace(/\s+/g, '_') + new Date().toISOString().replace(/[-:T.Z]/g, '') + ".zip");
+        await this.context.tracing.stop({ path: traceFilePath });
         await captureScreenshot(this.page);
-        const videoPath = path.resolve("test-results/videos");
-        const videoFilePath = path.join(videoPath, scenarioName.replace(/\s+/g, '_')+new Date().toISOString().replace(/[-:T.Z]/g, '')+".zip");
-        await this.context.tracing.stop({ path: videoFilePath });
     }
 });
 
