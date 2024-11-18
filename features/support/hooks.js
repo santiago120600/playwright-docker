@@ -4,14 +4,25 @@ const POManager = require('../../pageobjects/POManager');
 const path = require('path');
 const fs = require('fs');
 
+const CONFIG = {
+    paths: {
+        videos: path.resolve("allure-results/videos"),
+        traces: path.resolve("allure-results/traces"),
+        screenshots: path.resolve("allure-results/screenshots")
+    },
+    browser: {
+        headless: true,
+    }
+};
+
 let stepName;
 let scenarioName;
 
 Before(async function (scenario) {
-    this.browser = await chromium.launch({ headless: true });
+    this.browser = await chromium.launch({ headless: CONFIG.browser.headless });
     this.context = await this.browser.newContext({ 
         recordVideo: { 
-            dir: path.resolve("allure-results/videos")
+            dir: CONFIG.paths.videos
         } 
     });
     await this.context.tracing.start({ screenshots: true, snapshots: true });
@@ -41,26 +52,30 @@ After(async function () {
 
 AfterStep(async function ({ result }) {
     if (result.status === Status.FAILED) {
-        const tracePath = path.resolve("allure-results/traces");
+        const tracePath = CONFIG.paths.traces;
         const traceFilePath = path.join(tracePath, scenarioName.replace(/\s+/g, '_') + new Date().toISOString().replace(/[-:T.Z]/g, '') + ".zip");
         await this.context.tracing.stop({ path: traceFilePath });
         const videoPath = await this.page.video().path();
         const screenshotPath = await captureScreenshot(this.page);
-        if(fs.existsSync(screenshotPath)) {
-            this.attach(fs.readFileSync(screenshotPath), 'image/png');
-        }
         await this.context.close();
-        if (fs.existsSync(traceFilePath)) {
-            this.attach(fs.readFileSync(traceFilePath), 'application/zip');
-        }
-        if (fs.existsSync(videoPath)) {
-            this.attach(fs.readFileSync(videoPath), 'video/webm');
+        // Attach artifacts
+        const artifacts = [
+            { path: screenshotPath, mimeType: 'image/png' },
+            { path: traceFilePath, mimeType: 'application/zip' },
+            { path: videoPath, mimeType: 'video/webm' }
+        ];
+
+        for (const artifact of artifacts) {
+            if (fs.existsSync(artifact.path)) {
+                const fileContent = fs.readFileSync(artifact.path);
+                this.attach(fileContent, artifact.mimeType);
+            }
         }
     }
 });
 
 async function captureScreenshot(page) {
-    const screenshotPath = path.resolve("allure-results/screenshots");
+    const screenshotPath = CONFIG.paths.screenshots;
     if (!fs.existsSync(screenshotPath)) {
       fs.mkdirSync(screenshotPath);
     }
