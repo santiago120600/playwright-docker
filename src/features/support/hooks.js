@@ -28,6 +28,7 @@ Before(async function (scenario) {
     });
     await this.context.tracing.start({ screenshots: true, snapshots: true });
     this.page = await this.context.newPage();
+    this.page.route('**/*.{jpg,png,jpeg}',route=>route.abort());
     this.poManager = new POManager(this.page);
     scenarioName = scenario.pickle.name;
 });
