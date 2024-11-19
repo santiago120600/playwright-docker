@@ -37,15 +37,17 @@ BeforeStep(async (scenario) => {
     stepName = scenario.pickleStep.text;
 });
 
-After(async function () {
-    if (this.page) {
-        const video = this.page.video();
-        await this.page.close();
-        await this.context.close(); // Finalizes the video
-        if (video) {
-            const videoPath = await video.path();
-            if (fs.existsSync(videoPath)) {
-                await video.delete();
+After(async function ({ result}) {
+    if (result.status === Status.PASSED) {
+        if (this.page) {
+            const video = this.page.video();
+            await this.page.close();
+            await this.context.close(); // Finalizes the video
+            if (video) {
+                const videoPath = await video.path();
+                if (fs.existsSync(videoPath)) {
+                    await video.delete();
+                }
             }
         }
     }
