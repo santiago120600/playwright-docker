@@ -1,5 +1,5 @@
 const { Before, BeforeStep, After, AfterStep, Status } = require('@cucumber/cucumber');
-const { chromium } = require('@playwright/test');
+const { chromium, request } = require('@playwright/test');
 const POManager = require('../../pageobjects/POManager');
 const path = require('path');
 const fs = require('fs');
@@ -19,6 +19,7 @@ let stepName;
 let scenarioName;
 
 Before(async function (scenario) {
+    this.apiContext = await request.newContext();
     this.browser = await chromium.launch({ headless: CONFIG.browser.headless });
     this.context = await this.browser.newContext({ 
         recordVideo: { 

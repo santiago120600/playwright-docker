@@ -1,12 +1,19 @@
 const { When, Given, Then, setDefaultTimeout } = require('@cucumber/cucumber');
 const { expect } = require('@playwright/test');
+const APIUtils = require('../../utils/APIUtils');
+
 
 setDefaultTimeout(30000);
 
 Given('user login to Ecommerce application with {string} and {string}', async function (username, password) {
+    const apiUtils = new APIUtils(this.apiContext);
+    token = await apiUtils.getToken(username,password);
+    // Inject token into browser context
+    await this.context.addInitScript(token => {
+        window.localStorage.setItem('token', token);
+    }, token);
     const loginPage = this.poManager.getLoginPage();
     await loginPage.goTo();
-    await loginPage.login(username, password);
 });
 
 When('Add {string} to cart', async function (productName) {
